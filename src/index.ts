@@ -1,5 +1,3 @@
-import { usersTable } from './drizzle/schema';
-import { bannedUsersTable } from './drizzle/schema';
 import { autoRetry } from "@grammyjs/auto-retry";
 import { parseMode } from "@grammyjs/parse-mode";
 import { run, sequentialize } from "@grammyjs/runner";
