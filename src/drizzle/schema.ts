@@ -106,3 +106,15 @@ export const isUserBanned = async (telegramUserId: string) => {
 export const getActiveGameByChat = async (chatId: string) => {
   return await gamesCollection.findOne({ activeChat: chatId });
 };
+
+export {
+  gamesTable,
+  guessesTable,
+  usersTable,
+  leaderboardTable,
+  bannedUsersTable,
+  gamesRelations,
+  guessesRelations,
+  usersRelations,
+  leaderboardRelations,
+};
