@@ -7,9 +7,9 @@ import {
   text,
   timestamp,
   varchar,
+  sql,
 } from "drizzle-orm/pg-core";
 
-import { pgTable, serial, integer, varchar, text, timestamp, sql, relations } from "drizzle-orm";
 
 // MongoDB Collections
 export const gamesCollection = db.collection("games");
