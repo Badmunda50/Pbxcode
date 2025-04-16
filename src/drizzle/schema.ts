@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { db } from "../config/database";
+import { pgTable, integer, text, varchar, timestamp, relation } from "drizzle-orm";
 
 // MongoDB Collections
 export const gamesCollection = db.collection("games");
@@ -7,6 +8,55 @@ export const guessesCollection = db.collection("guesses");
 export const usersCollection = db.collection("users");
 export const leaderboardCollection = db.collection("leaderboard");
 export const bannedUsersCollection = db.collection("banned_users");
+
+// Drizzle ORM Tables
+export const gamesTable = pgTable("games", {
+  id: integer("id").primaryKey().autoIncrement(),
+  word: text("word"),
+  activeChat: varchar("active_chat", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const guessesTable = pgTable("guesses", {
+  id: integer("id").primaryKey().autoIncrement(),
+  guess: text("guess"),
+  gameId: integer("game_id"),
+  chatId: varchar("chat_id", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const usersTable = pgTable("users", {
+  id: integer("id").primaryKey().autoIncrement(),
+  name: varchar("name", { length: 255 }),
+  username: varchar("username", { length: 255 }),
+  telegramUserId: varchar("telegram_user_id", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const leaderboardTable = pgTable("leaderboard", {
+  id: integer("id").primaryKey().autoIncrement(),
+  userId: integer("user_id"),
+  chatId: varchar("chat_id", { length: 255 }),
+  score: integer("score").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const bannedUsersTable = pgTable("banned_users", {
+  id: integer("id").primaryKey().autoIncrement(),
+  userId: integer("user_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Define relationships
+export const gamesRelations = relation(gamesTable);
+export const guessesRelations = relation(guessesTable);
+export const usersRelations = relation(usersTable);
+export const leaderboardRelations = relation(leaderboardTable);
 
 // Create Game
 export const createGame = async ({
@@ -107,6 +157,7 @@ export const getActiveGameByChat = async (chatId: string) => {
   return await gamesCollection.findOne({ activeChat: chatId });
 };
 
+// Export for usage
 export {
   gamesTable,
   guessesTable,
