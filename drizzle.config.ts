@@ -1,13 +1,9 @@
-import { defineConfig } from "drizzle-kit";
-
-import { env } from "./src/config/env";
-
 export default defineConfig({
   schema: "./src/drizzle/schema.ts",
   out: "./src/drizzle/migrations",
-  dialect: "postgresql",
+  dialect: "mongodb", // Update this to mongodb
   dbCredentials: {
-    url: env.DATABASE_URI,
+    url: env.DATABASE_URI, // Replace DATABASE_URI with MongoDB URI
   },
   verbose: env.NODE_ENV === "development",
   strict: true,
