@@ -86,6 +86,34 @@ export const createBannedUser = async (data: {
   };
   return await bannedUsersCollection.insertOne(bannedUser);
 };
+export const usersTable = pgTable("users", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar("name", { length: 255 }).notNull(),
+  username: varchar("username", { length: 255 }),
+  telegramUserId: varchar("telegram_user_id").notNull().unique(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
+});
+
+export const leaderboardTable = pgTable("leaderboard", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .references(() => usersTable.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  chatId: varchar("chat_id").notNull(),
+  score: integer("score").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
+});
+
 export const bannedUsersTable = pgTable("banned_users", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")
@@ -99,6 +127,17 @@ export const bannedUsersTable = pgTable("banned_users", {
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 });
+
+export const gamesRelations = relations(gamesTable, ({ many }) => ({
+  guesses: many(guessesTable),
+}));
+
+export const guessesRelations = relations(guessesTable, ({ one }) => ({
+  game: one(gamesTable, {
+    fields: [guessesTable.gameId],
+    references: [gamesTable.id],
+  }),
+}));
 
 export const usersRelations = relations(usersTable, ({ many }) => ({
   leaderboard: many(leaderboardTable),
