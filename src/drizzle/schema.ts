@@ -99,3 +99,14 @@ export const bannedUsersTable = pgTable("banned_users", {
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 });
+
+export const usersRelations = relations(usersTable, ({ many }) => ({
+  leaderboard: many(leaderboardTable),
+}));
+
+export const leaderboardRelations = relations(leaderboardTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [leaderboardTable.userId],
+    references: [usersTable.id],
+  }),
+}));
