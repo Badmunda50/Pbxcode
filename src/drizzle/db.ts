@@ -1,22 +1,17 @@
-// Uncomment the desired drizzle import based on the environment
-// import { drizzle } from "drizzle-orm/neon-http";
-import { drizzle } from "drizzle-orm/node-postgres";
+// Uncomment the SQLite section
 import { drizzle as drizzleSQLite } from "drizzle-orm/better-sqlite3"; // SQLite support
-
-import { env } from "../config/env";
+import Database from "better-sqlite3";
 import * as schema from "./schema";
 
-// For PostgreSQL
-export const db = drizzle(env.DATABASE_URI, {
-  schema,
-  logger: env.NODE_ENV === "development",
-});
-
-// For SQLite (automatically creates and runs the database)
-import Database from "better-sqlite3";
 const sqliteDB = new Database("sqlite-database.db"); // SQLite database file
-
 export const sqliteDb = drizzleSQLite(sqliteDB, {
   schema,
-  logger: env.NODE_ENV === "development",
+  logger: process.env.NODE_ENV === "development",
 });
+
+// Comment out the PostgreSQL section if not needed
+// import { drizzle } from "drizzle-orm/node-postgres";
+// export const db = drizzle(process.env.DATABASE_URI, {
+//   schema,
+//   logger: process.env.NODE_ENV === "development",
+// });
