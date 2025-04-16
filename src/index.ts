@@ -1,3 +1,4 @@
+import { db } from "./drizzle/db";
 import { autoRetry } from "@grammyjs/auto-retry";
 import { parseMode } from "@grammyjs/parse-mode";
 import { run, sequentialize } from "@grammyjs/runner";
