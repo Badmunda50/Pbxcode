@@ -102,7 +102,7 @@ export const usersTable = pgTable("users", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
+    .default(mongodb`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 });
 
@@ -118,7 +118,7 @@ export const leaderboardTable = pgTable("leaderboard", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
+    .default(mongodb`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 });
 
@@ -132,7 +132,7 @@ export const bannedUsersTable = pgTable("banned_users", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
+    .default(mongodb`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 });
 
@@ -164,7 +164,7 @@ export const gamesTable = pgTable("games", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
+    .default(mongodb`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 });
 
@@ -178,6 +178,6 @@ export const guessesTable = pgTable("guesses", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
+    .default(mongodb`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 });
