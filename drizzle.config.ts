@@ -1,14 +1,9 @@
-import { defineConfig } from "drizzle-kit";
+import { MongoClient } from "mongodb";
 
-import { env } from "./src/config/env";
+const client = new MongoClient(env.DATABASE_URI);
 
-export default defineConfig({
-  schema: "./src/drizzle/schema.ts",
-  out: "./src/drizzle/migrations",
-  dialect: "postgresql",
-  dbCredentials: {
-    url: env.DATABASE_URI,
-  },
+export default {
+  db: client.db("your_database_name"),
   verbose: env.NODE_ENV === "development",
   strict: true,
-});
+};
