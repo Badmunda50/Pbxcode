@@ -1,6 +1,13 @@
 import { ObjectId } from "mongodb";
 import { db } from "../config/database";
-import { pgTable, serial, integer, varchar, text, timestamp, sql, relations } from "drizzle-orm";
+import {
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 // MongoDB Collections
 export const gamesCollection = db.collection("games");
