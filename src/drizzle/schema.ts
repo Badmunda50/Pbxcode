@@ -1,22 +1,17 @@
 import { ObjectId } from "mongodb";
 import { db } from "../config/database";
+import { pgTable, serial, integer, varchar, text, timestamp, sql, relations } from "some-orm-library"; // Replace with the actual ORM library used
 
-// Define the "games" collection schema
+// MongoDB Collections
 export const gamesCollection = db.collection("games");
-
-// Define the "guesses" collection schema
 export const guessesCollection = db.collection("guesses");
-
-// Define the "users" collection schema
 export const usersCollection = db.collection("users");
-
-// Define the "leaderboard" collection schema
 export const leaderboardCollection = db.collection("leaderboard");
-
-// Define the "banned_users" collection schema
 export const bannedUsersCollection = db.collection("banned_users");
 
-// Example: Inserting a game document
+// MongoDB Operations
+
+// Insert a game document
 export const createGame = async (data: {
   word: string;
   activeChat: string;
@@ -31,7 +26,7 @@ export const createGame = async (data: {
   return await gamesCollection.insertOne(game);
 };
 
-// Example: Inserting a guess document
+// Insert a guess document
 export const createGuess = async (data: {
   guess: string;
   gameId: ObjectId;
@@ -47,7 +42,7 @@ export const createGuess = async (data: {
   return await guessesCollection.insertOne(guess);
 };
 
-// Example: Inserting a user document
+// Insert a user document
 export const createUser = async (data: {
   name: string;
   username?: string;
@@ -63,7 +58,7 @@ export const createUser = async (data: {
   return await usersCollection.insertOne(user);
 };
 
-// Example: Inserting a leaderboard entry
+// Insert a leaderboard entry
 export const createLeaderboardEntry = async (data: {
   userId: ObjectId;
   chatId: string;
@@ -79,7 +74,7 @@ export const createLeaderboardEntry = async (data: {
   return await leaderboardCollection.insertOne(leaderboardEntry);
 };
 
-// Example: Inserting a banned user document
+// Insert a banned user document
 export const createBannedUser = async (data: {
   userId: ObjectId;
   createdAt?: Date;
@@ -93,20 +88,9 @@ export const createBannedUser = async (data: {
   return await bannedUsersCollection.insertOne(bannedUser);
 };
 
-export const bannedUsersTable = pgTable("banned_users", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id")
-    .references(() => usersTable.id, {
-      onDelete: "cascade",
-    })
-    .notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => new Date()),
-});
+// PostgreSQL Tables and Relations
 
+// Users Table
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -118,6 +102,8 @@ export const usersTable = pgTable("users", {
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date()),
 });
+
+// Games Table
 export const gamesTable = pgTable("games", {
   id: serial("id").primaryKey(),
   word: varchar("word", { length: 5 }).notNull(),
@@ -129,6 +115,7 @@ export const gamesTable = pgTable("games", {
     .$onUpdate(() => new Date()),
 });
 
+// Guesses Table
 export const guessesTable = pgTable("guesses", {
   id: serial("id").primaryKey(),
   guess: varchar("guess", { length: 5 }).notNull(),
@@ -143,18 +130,7 @@ export const guessesTable = pgTable("guesses", {
     .$onUpdate(() => new Date()),
 });
 
-export const usersTable = pgTable("users", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar("name", { length: 255 }).notNull(),
-  username: varchar("username", { length: 255 }),
-  telegramUserId: varchar("telegram_user_id").notNull().unique(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => new Date()),
-});
-
+// Leaderboard Table
 export const leaderboardTable = pgTable("leaderboard", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")
@@ -171,6 +147,7 @@ export const leaderboardTable = pgTable("leaderboard", {
     .$onUpdate(() => new Date()),
 });
 
+// Banned Users Table
 export const bannedUsersTable = pgTable("banned_users", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")
@@ -185,6 +162,7 @@ export const bannedUsersTable = pgTable("banned_users", {
     .$onUpdate(() => new Date()),
 });
 
+// Relations
 export const gamesRelations = relations(gamesTable, ({ many }) => ({
   guesses: many(guessesTable),
 }));
