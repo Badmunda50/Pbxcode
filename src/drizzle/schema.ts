@@ -4,6 +4,7 @@ import { db } from "../config/database";
 import {
   integer,
   pgTable,
+  varchar,
 } from "drizzle-orm/pg-core";
 // MongoDB Collections
 export const gamesCollection = db.collection("games");
