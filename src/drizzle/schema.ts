@@ -86,3 +86,16 @@ export const createBannedUser = async (data: {
   };
   return await bannedUsersCollection.insertOne(bannedUser);
 };
+export const bannedUsersTable = pgTable("banned_users", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .references(() => usersTable.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
+});
