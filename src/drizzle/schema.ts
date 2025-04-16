@@ -3,6 +3,9 @@ import { db } from "../config/database";
 
 import {
   integer,
+  serial,
+  text,
+  timestamp,
   pgTable,
   varchar,
 } from "drizzle-orm/pg-core";
