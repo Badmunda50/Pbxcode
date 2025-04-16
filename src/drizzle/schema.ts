@@ -7,7 +7,6 @@ import {
   text,
   timestamp,
   varchar,
-  sql,
 } from "drizzle-orm/pg-core";
 
 
