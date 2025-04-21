@@ -1,98 +1,47 @@
-import { relations, sql } from "drizzle-orm";
-import {
-  integer,
-  pgTable,
-  serial,
-  text,
-  timestamp,
-  varchar,
-} from "drizzle-orm/pg-core";
+import mongoose from "mongoose";
 
-export const gamesTable = pgTable("games", {
-  id: serial("id").primaryKey(),
-  word: varchar("word", { length: 5 }).notNull(),
-  activeChat: text("active_chat").notNull().unique(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => new Date()),
+const { Schema, model } = mongoose;
+
+const gameSchema = new Schema({
+  word: { type: String, required: true, maxlength: 5 },
+  activeChat: { type: String, required: true, unique: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
-export const guessesTable = pgTable("guesses", {
-  id: serial("id").primaryKey(),
-  guess: varchar("guess", { length: 5 }).notNull(),
-  gameId: integer("game_id")
-    .notNull()
-    .references(() => gamesTable.id, { onDelete: "cascade" }),
-  chatId: varchar("chat_id").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => new Date()),
+const guessSchema = new Schema({
+  guess: { type: String, required: true, maxlength: 5 },
+  gameId: { type: Schema.Types.ObjectId, ref: "Game", required: true },
+  chatId: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
-export const usersTable = pgTable("users", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar("name", { length: 255 }).notNull(),
-  username: varchar("username", { length: 255 }),
-  telegramUserId: varchar("telegram_user_id").notNull().unique(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => new Date()),
+const userSchema = new Schema({
+  name: { type: String, required: true },
+  username: { type: String },
+  telegramUserId: { type: String, required: true, unique: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
-export const leaderboardTable = pgTable("leaderboard", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id")
-    .references(() => usersTable.id, {
-      onDelete: "cascade",
-    })
-    .notNull(),
-  chatId: varchar("chat_id").notNull(),
-  score: integer("score").notNull().default(0),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => new Date()),
+const leaderboardSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  chatId: { type: String, required: true },
+  score: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
-export const bannedUsersTable = pgTable("banned_users", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id")
-    .references(() => usersTable.id, {
-      onDelete: "cascade",
-    })
-    .notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => new Date()),
+const bannedUserSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
-export const gamesRelations = relations(gamesTable, ({ many }) => ({
-  guesses: many(guessesTable),
-}));
-
-export const guessesRelations = relations(guessesTable, ({ one }) => ({
-  game: one(gamesTable, {
-    fields: [guessesTable.gameId],
-    references: [gamesTable.id],
-  }),
-}));
-
-export const usersRelations = relations(usersTable, ({ many }) => ({
-  leaderboard: many(leaderboardTable),
-}));
-
-export const leaderboardRelations = relations(leaderboardTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [leaderboardTable.userId],
-    references: [usersTable.id],
-  }),
-}));
+// Models
+export const Game = model("Game", gameSchema);
+export const Guess = model("Guess", guessSchema);
+export const User = model("User", userSchema);
+export const Leaderboard = model("Leaderboard", leaderboardSchema);
+export const BannedUser = model("BannedUser", bannedUserSchema);
